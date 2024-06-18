@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.quyduoi.thi_kotlin.R
 import androidx.navigation.NavHostController
-import com.quyduoi.thi_kotlin.Model.XeHoi
+import com.quyduoi.thi_kotlin.Model.SinhVien
 import kotlinx.coroutines.delay
 
 @Composable
@@ -41,9 +41,9 @@ fun ManChao(navController: NavHostController) {
         Modifier
             .fillMaxSize(), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(painter = painterResource(id = R.drawable.anh_dai_dien), contentDescription = "")
+        Image(painter = painterResource(id = R.drawable.logo), contentDescription = "", modifier = Modifier.padding(horizontal = 20.dp))
 
-        Text(text = "PH41939", style = MaterialTheme.typography.titleLarge)
+        Text(text = "PH41939 - 18/06/2024", style = MaterialTheme.typography.titleLarge)
 
         Button(onClick = {
             navController.navigate(Screens.TrangChu.screen) {
@@ -180,7 +180,7 @@ fun DialogComponent(
 @Composable
 fun InformationDialogCard(
     title: String,
-    sanPham: XeHoi,
+    sanPham: SinhVien,
     onClose: () -> Unit
 ) {
     Card(
@@ -202,7 +202,7 @@ fun InformationDialogCard(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
-                text = "Tên xe: ${sanPham.name_PH41939}",
+                text = "Mã sinh viên: ${sanPham.PH41939_mssv}",
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -211,7 +211,7 @@ fun InformationDialogCard(
                     .padding(horizontal = 20.dp, vertical = 10.dp)
             )
             Text(
-                text = "Giá xe: ${sanPham.price_PH41939.toInt()} đ",
+                text = "Điểm trung bình: ${sanPham.PH41939_diemTB.toInt()} đ",
                 color = Color.Black,
                 fontSize = 16.sp,
                 modifier = Modifier
@@ -219,7 +219,7 @@ fun InformationDialogCard(
                     .padding(horizontal = 20.dp)
             )
             Text(
-                text = "Mẫu xe: ${sanPham.PH41939_model}",
+                text = "Tên sinh viên: ${sanPham.PH41939_tensv}",
                 color = Color.Black,
                 fontSize = 16.sp,
                 modifier = Modifier
@@ -227,7 +227,7 @@ fun InformationDialogCard(
                     .padding(horizontal = 20.dp, vertical = 10.dp)
             )
             Text(
-                text = if (sanPham.PH41939_status) "Trạng thái: Sản phẩm mới" else "Trạng thái: Sản phẩm cũ",
+                text = if (sanPham.PH41939_trangthai) "Trạng thái: Đã tốt nghiệp" else "Trạng thái: Chưa tốt nghiệp",
                 color = Color.Black,
                 fontSize = 16.sp,
                 modifier = Modifier

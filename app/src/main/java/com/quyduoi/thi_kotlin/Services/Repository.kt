@@ -1,12 +1,12 @@
 package com.quyduoi.thi_kotlin.Services
 
 import android.util.Log
-import com.quyduoi.thi_kotlin.Model.XeHoi
+import com.quyduoi.thi_kotlin.Model.SinhVien
 
 class Repository {
     private val apiService = RetrofitService().apiService
 
-    suspend fun them (sanPham: XeHoi): XeHoi? {
+    suspend fun them (sanPham: SinhVien): SinhVien? {
         return try {
             val response = apiService.them(sanPham)
             if (response.isSuccessful) {
@@ -21,7 +21,7 @@ class Repository {
         }
     }
 
-    suspend fun sua(id: String, sanPham: XeHoi): XeHoi? {
+    suspend fun sua(id: String, sanPham: SinhVien): SinhVien? {
         return try {
             val response = apiService.sua(id, sanPham)
             if (response.isSuccessful) {
@@ -36,7 +36,7 @@ class Repository {
         }
     }
 
-    suspend fun xoaLoaiMon(id: String): XeHoi? {
+    suspend fun xoaLoaiMon(id: String): SinhVien? {
         return try {
             val response = apiService.xoa(id)
             if (response.isSuccessful) {
@@ -51,7 +51,7 @@ class Repository {
         }
     }
 
-    suspend fun layDanhSach(): List<XeHoi>? {
+    suspend fun layDanhSach(): List<SinhVien>? {
         return try {
             val response = apiService.layDanhSach()
             if (response.isSuccessful) {

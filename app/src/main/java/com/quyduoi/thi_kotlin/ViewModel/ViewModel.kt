@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 //import com.quyduoi.thi_kotlin.Model.SanPham
-import com.quyduoi.thi_kotlin.Model.XeHoi
+import com.quyduoi.thi_kotlin.Model.SinhVien
 import com.quyduoi.thi_kotlin.Services.Repository
 import kotlinx.coroutines.launch
 
@@ -13,8 +13,8 @@ class SanPhamViewModel : ViewModel() {
 
     private val repository = Repository()
 
-    private val _sanPhams = MutableLiveData<List<XeHoi>>()
-    val sanPhams: LiveData<List<XeHoi>> = _sanPhams
+    private val _sanPhams = MutableLiveData<List<SinhVien>>()
+    val sanPhams: LiveData<List<SinhVien>> = _sanPhams
 
     init {
         layDanhSach()
@@ -34,7 +34,7 @@ class SanPhamViewModel : ViewModel() {
         }
     }
 
-    fun them(sanPham: XeHoi) {
+    fun them(sanPham: SinhVien) {
         viewModelScope.launch {
             val result = repository.them(sanPham)
             if (result != null) {
@@ -46,7 +46,7 @@ class SanPhamViewModel : ViewModel() {
         }
     }
 
-    fun sua(id: String, sanPham: XeHoi) {
+    fun sua(id: String, sanPham: SinhVien) {
         viewModelScope.launch {
             val result = repository.sua(id, sanPham)
             if (result != null) {

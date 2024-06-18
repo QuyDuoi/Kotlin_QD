@@ -44,18 +44,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.quyduoi.thi_kotlin.Model.XeHoi
-//import com.quyduoi.thi_kotlin.Model.SanPham
+import androidx.navigation.NavHostController
+import com.quyduoi.thi_kotlin.Model.SinhVien
 import com.quyduoi.thi_kotlin.ViewModel.SanPhamViewModel
 
 @Composable
-fun TrangChu(viewModel: SanPhamViewModel) {
+fun TrangChu(viewModel: SanPhamViewModel, navController: NavHostController) {
     val sanPhamLists by viewModel.sanPhams.observeAsState(emptyList())
     var showDialog by remember { mutableStateOf(false) }
     var showDialogThem by remember { mutableStateOf(false) }
     var showDialogSua by remember { mutableStateOf(false) }
     var showInfo by remember { mutableStateOf(false) }
-    var selectedSanPham by remember { mutableStateOf<XeHoi?>(null) }
+    var selectedSanPham by remember { mutableStateOf<SinhVien?>(null) }
 
     val context = LocalContext.current
 
@@ -72,14 +72,15 @@ fun TrangChu(viewModel: SanPhamViewModel) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Quản lý sản phẩm", style = MaterialTheme.typography.titleLarge, color = Color.White)
+            Text(text = "Quản lý danh sách sinh viên", style = MaterialTheme.typography.titleLarge, color = Color.White)
             Spacer(modifier = Modifier.height(10.dp))
             Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                 contentAlignment = Alignment.BottomEnd) {
                 Button(onClick = {
                     showDialogThem = true
+//                    navController.navigate(Screens.ManThem.screen)
                 }) {
-                    Text(text = "Thêm sản phẩm")
+                    Text(text = "Thêm sinh viên")
                 }
             }
             LazyColumn {
@@ -88,6 +89,7 @@ fun TrangChu(viewModel: SanPhamViewModel) {
                         onEdit = {
                             selectedSanPham = sanPham
                             showDialogSua = true
+//                            navController.navigate("${Screens.ManCapNhat.screen}/${sanPham._id}")
                         },
                         onDelete = {
                             selectedSanPham = sanPham
@@ -110,11 +112,11 @@ fun TrangChu(viewModel: SanPhamViewModel) {
         if (showDialog && selectedSanPham != null) {
             ConfirmDialogCard(
                 title = "Xác nhận xóa",
-                message = "Bạn có chắc chắn muốn xóa món ${selectedSanPham?.name_PH41939}?",
+                message = "Bạn có chắc chắn muốn xóa sinh viên có mã ${selectedSanPham?.PH41939_mssv}?",
                 onConfirmClick = {
                     selectedSanPham?.let { sanPham ->
                         viewModel.xoa(sanPham._id)
-                        Toast.makeText(context, "Xóa sản phẩm thành công!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Xóa thông tin thành công!", Toast.LENGTH_SHORT).show()
                     }
                     showDialog = false
                     selectedSanPham = null
@@ -127,15 +129,15 @@ fun TrangChu(viewModel: SanPhamViewModel) {
         }
         if (showDialogThem) {
             AddUpdateDialogCard(
-                title = "Thêm sản phẩm",
+                title = "Thêm thông tin sinh viên",
                 onDismiss = { showDialogThem = false },
                 onConfirm = { name, price, model, status ->
-                    val newSanPham = XeHoi(
+                    val newSanPham = SinhVien(
                         _id = "",
-                        name_PH41939 = name,
-                        price_PH41939 = price,
-                        PH41939_model = model,
-                        PH41939_status = status
+                        PH41939_mssv = name,
+                        PH41939_diemTB = price,
+                        PH41939_tensv = model,
+                        PH41939_trangthai = status
                     )
                     viewModel.them(newSanPham)
                     Toast.makeText(context, "Thêm sản phẩm mới thành công!", Toast.LENGTH_SHORT).show()
@@ -145,19 +147,19 @@ fun TrangChu(viewModel: SanPhamViewModel) {
         }
         if (showDialogSua && selectedSanPham != null) {
             AddUpdateDialogCard(
-                title = "Sửa sản phẩm",
+                title = "Sửa thông tin",
                 sanPham = selectedSanPham,
                 onDismiss = { showDialogSua = false },
                 onConfirm = { name, price, model, status ->
                     selectedSanPham?.let { sanPham ->
                         val updatedSanPham = sanPham.copy(
-                            name_PH41939 = name,
-                            price_PH41939 = price,
-                            PH41939_model = model,
-                            PH41939_status = status
+                            PH41939_mssv = name,
+                            PH41939_diemTB = price,
+                            PH41939_tensv = model,
+                            PH41939_trangthai = status
                         )
                         viewModel.sua(sanPham._id, updatedSanPham)
-                        Toast.makeText(context, "Cập nhât sản phẩm thành công!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Cập nhât thông tin thành công!", Toast.LENGTH_SHORT).show()
                     }
                     showDialogSua = false
                     selectedSanPham = null
@@ -166,7 +168,7 @@ fun TrangChu(viewModel: SanPhamViewModel) {
         }
         if (showInfo && selectedSanPham != null) {
             InformationDialogCard(
-                title = "Thông tin sản phẩm",
+                title = "Thông tin sinh viên",
                 sanPham = selectedSanPham!!,
                 onClose = { showInfo = false }
             )
@@ -175,7 +177,7 @@ fun TrangChu(viewModel: SanPhamViewModel) {
 }
 
 @Composable
-fun SanPhamItem(sanPham: XeHoi, id: Int, onEdit: (XeHoi) -> Unit, onDelete: (XeHoi) -> Unit, onInfo: (XeHoi) -> Unit) {
+fun SanPhamItem(sanPham: SinhVien, id: Int, onEdit: (SinhVien) -> Unit, onDelete: (SinhVien) -> Unit, onInfo: (SinhVien) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,7 +205,7 @@ fun SanPhamItem(sanPham: XeHoi, id: Int, onEdit: (XeHoi) -> Unit, onDelete: (XeH
                         .padding(10.dp)
                 ) {
                     Text(
-                        text = "Tên xe: " + sanPham.name_PH41939,
+                        text = "Mã sinh viên: " + sanPham.PH41939_mssv,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
@@ -211,21 +213,21 @@ fun SanPhamItem(sanPham: XeHoi, id: Int, onEdit: (XeHoi) -> Unit, onDelete: (XeH
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Giá xe: ${(sanPham.price_PH41939).toInt()} đ",
+                        text = "Điểm trung bình: ${(sanPham.PH41939_diemTB).toInt()}",
                         color = Color.White,
                         fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = sanPham.PH41939_model,
+                        text = "Tên sinh viên: ${sanPham.PH41939_tensv}",
                         color = Color.White,
                         fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = if (sanPham.PH41939_status) "Sản phẩm mới" else "Sản phẩm cũ",
+                        text = if (sanPham.PH41939_trangthai) "Tình trạng: Đã tốt nghiệp" else "Tình trạng: Chưa tốt nghiệp",
                         color = Color.White,
                         fontSize = 16.sp,
                         maxLines = 1,
@@ -233,7 +235,9 @@ fun SanPhamItem(sanPham: XeHoi, id: Int, onEdit: (XeHoi) -> Unit, onDelete: (XeH
                     )
                 }
                 Row {
-                    IconButton(onClick = { onEdit(sanPham) }) {
+                    IconButton(onClick = {
+                        onEdit(sanPham)
+                    }) {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = "", tint = Color.White)
                     }
                     IconButton(onClick = { onDelete(sanPham) }) {
@@ -248,14 +252,14 @@ fun SanPhamItem(sanPham: XeHoi, id: Int, onEdit: (XeHoi) -> Unit, onDelete: (XeH
 @Composable
 fun AddUpdateDialogCard(
     title: String,
-    sanPham: XeHoi? = null,
-    onConfirm: (String, Float, String, Boolean) -> Unit,
+    sanPham: SinhVien? = null,
+    onConfirm: (String, Double, String, Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var name_PH41939 by remember { mutableStateOf(sanPham?.name_PH41939 ?: "") }
-    var price_PH41939 by remember { mutableStateOf(sanPham?.price_PH41939.toString())}
-    var PH41939_model by remember { mutableStateOf(sanPham?.PH41939_model ?: "") }
-    val isChecked = remember { mutableStateOf(sanPham?.PH41939_status ?: false) }
+    var PH41939_mssv by remember { mutableStateOf(sanPham?.PH41939_mssv ?: "") }
+    var PH41939_diemTB by remember { mutableStateOf(sanPham?.PH41939_diemTB.toString())}
+    var PH41939_tensv by remember { mutableStateOf(sanPham?.PH41939_tensv ?: "") }
+    val isChecked = remember { mutableStateOf(sanPham?.PH41939_trangthai ?: false) }
     var showThongBao by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
 
@@ -286,30 +290,30 @@ fun AddUpdateDialogCard(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             OutlinedTextField(
-                value = name_PH41939,
-                onValueChange = { name_PH41939 = it },
-                label = { Text(text = "Name") },
-                placeholder = { Text(text = "Enter name") },
+                value = PH41939_mssv,
+                onValueChange = { PH41939_mssv = it },
+                label = { Text(text = "Mã sinh viên") },
+                placeholder = { Text(text = "Nhập mã sinh viên") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 30.dp, end = 10.dp, top = 25.dp),
                 maxLines = 1
             )
             OutlinedTextField(
-                value = price_PH41939,
-                onValueChange = { price_PH41939 = it },
-                label = { Text(text = "Price") },
-                placeholder = { Text(text = "Enter Price") },
+                value = PH41939_diemTB,
+                onValueChange = { PH41939_diemTB = it },
+                label = { Text(text = "Điểm trung bình") },
+                placeholder = { Text(text = "Nhập điểm trung bình") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 30.dp, end = 10.dp, top = 25.dp),
                 maxLines = 1
             )
             OutlinedTextField(
-                value = PH41939_model,
-                onValueChange = { PH41939_model = it },
-                label = { Text(text = "Model") },
-                placeholder = { Text(text = "Enter Model") },
+                value = PH41939_tensv,
+                onValueChange = { PH41939_tensv = it },
+                label = { Text(text = "Tên sinh viên") },
+                placeholder = { Text(text = "Nhập tên sinh viên") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 30.dp, end = 10.dp, top = 25.dp),
@@ -329,7 +333,7 @@ fun AddUpdateDialogCard(
                             isChecked.value = it
                         }
                     )
-                    Text("Hàng mới", modifier = Modifier.padding(start = 8.dp, top = 15.dp))
+                    Text("Đã tốt nghiệp", modifier = Modifier.padding(start = 8.dp, top = 15.dp))
                 }
             }
             Row(
@@ -352,15 +356,18 @@ fun AddUpdateDialogCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        val priceDouble = price_PH41939.toFloatOrNull() ?: 0.0f
-                        if (name_PH41939.trim().isEmpty() || price_PH41939.trim().isEmpty() || PH41939_model.trim().isEmpty()) {
+                        val priceDouble = PH41939_diemTB.toDoubleOrNull()
+                        if (PH41939_mssv.trim().isEmpty() || PH41939_diemTB.trim().isEmpty() || PH41939_tensv.trim().isEmpty()) {
                             dialogMessage = "Vui lòng điền đầy đủ các trường thông tin!"
                             showThongBao = true
-                        } else if (priceDouble.isNaN() || priceDouble <= 0) {
-                            dialogMessage = "Giá phải là số lớn hơn 0!"
+                        } else if (priceDouble == null) {
+                            dialogMessage = "Điểm phải là số!"
+                            showThongBao = true
+                        } else if (priceDouble < 0 || priceDouble > 10) {
+                            dialogMessage = "Điểm phải lớn hơn 0 và nhỏ hơn 10"
                             showThongBao = true
                         } else {
-                            onConfirm(name_PH41939, priceDouble, PH41939_model, isChecked.value)
+                            onConfirm(PH41939_mssv, priceDouble, PH41939_tensv, isChecked.value)
                         }
                     },
                     modifier = Modifier.weight(1f),
